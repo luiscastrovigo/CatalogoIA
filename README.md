@@ -25,7 +25,8 @@ Los roles (Administrador, Aprobador) se gestionan **dentro de la aplicación** (
 
 ```
 .
-├── 00-README.md … 14-reasignacion-de-dueno.md   Documentación funcional y técnica (15 documentos)
+├── 00-README.md … 15-publicacion-git.md          Documentación funcional y técnica (16 documentos)
+├── PREPARAR-GIT.md                               Guía de publicación en GitHub
 ├── Catalogo_Citizen_Development_IA.xlsx          Excel original que originó el proyecto
 ├── sql/                                          Scripts de base de datos
 │   ├── 01_schema_YanbalCitizenDevIA.sql          Creación completa desde cero
@@ -47,23 +48,26 @@ Los roles (Administrador, Aprobador) se gestionan **dentro de la aplicación** (
 
 ### Mapa de la documentación
 
-| Documento | Contenido |
-|---|---|
-| `00-README.md` | Índice y contexto general del proyecto |
-| `01-diccionario-datos-excel.md` | Diccionario del Excel de origen |
-| `02-modelo-datos-ampliado.md` | Modelo de datos ampliado |
-| `03-alcance-funcional.md` | Alcance funcional y permisos |
-| `04-identidad-visual.md` | Identidad visual Yanbal |
-| `05-documento-cero-prerequisitos.md` | Prerrequisitos de implementación |
-| `06-diseno-bd-sql-server.md` | Diseño de base de datos (DDL) |
-| `07-arquitectura-despliegue-componentes.md` | Arquitectura y componentes |
-| `08-reglas-negocio-calculo-riesgo.md` | Reglas de negocio y cálculo de nivel de riesgo |
-| `09-estado-implementacion-pruebas.md` | Estado de implementación y bitácora de pruebas |
-| `10-guia-despliegue-perms220.md` | Guía de despliegue en PERMS220 (IIS) |
-| `11-auditoria-seguridad.md` | Auditoría de seguridad y hallazgos |
-| `12-errores-y-controles.md` | Errores históricos y controles que los previenen |
-| `13-adjuntos-diseno-y-seguridad.md` | Diseño y seguridad de adjuntos |
-| `14-reasignacion-de-dueno.md` | Separación registrador / owner y reasignación |
+| # | Documento | Contenido |
+|---|---|---|
+| 00 | [Índice del proyecto](00-README.md) | Índice y contexto general del proyecto |
+| 01 | [Diccionario de datos del Excel](01-diccionario-datos-excel.md) | Diccionario del Excel de origen |
+| 02 | [Modelo de datos ampliado](02-modelo-datos-ampliado.md) | Entidades, atributos y relaciones |
+| 03 | [Alcance funcional](03-alcance-funcional.md) | Módulos, roles y permisos |
+| 04 | [Identidad visual](04-identidad-visual.md) | Paleta, tipografía y componentes Yanbal |
+| 05 | [Documento cero — prerrequisitos](05-documento-cero-prerequisitos.md) | Condiciones habilitantes antes de construir |
+| 06 | [Diseño de base de datos](06-diseno-bd-sql-server.md) | DDL de SQL Server en PERMS02 |
+| 07 | [Arquitectura y componentes](07-arquitectura-despliegue-componentes.md) | Arquitectura de despliegue |
+| 08 | [Reglas de negocio y riesgo](08-reglas-negocio-calculo-riesgo.md) | Cálculo del nivel de riesgo |
+| 09 | [Estado de implementación](09-estado-implementacion-pruebas.md) | Avance y bitácora de pruebas |
+| 10 | [Guía de despliegue PERMS220](10-guia-despliegue-perms220.md) | Publicación en IIS paso a paso |
+| 11 | [Auditoría de seguridad](11-auditoria-seguridad.md) | Hallazgos y remediación |
+| 12 | [Errores y controles](12-errores-y-controles.md) | Errores históricos y validación estática |
+| 13 | [Adjuntos](13-adjuntos-diseno-y-seguridad.md) | Diseño y seguridad de archivos adjuntos |
+| 14 | [Registrador y owner](14-reasignacion-de-dueno.md) | Separación de roles y reasignación |
+| 15 | [Publicación en GitHub](15-publicacion-git.md) | Control de versiones y puerta de secretos |
+
+Guía operativa para publicar cambios: **[PREPARAR-GIT.md](PREPARAR-GIT.md)**.
 
 ---
 
