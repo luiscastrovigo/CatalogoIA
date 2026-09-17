@@ -1,0 +1,22 @@
+# Normalización de fin de línea.
+# Git guarda LF en el repositorio y entrega CRLF en Windows.
+* text=auto
+
+# Archivos que deben conservar CRLF en el árbol de trabajo (Windows/IIS)
+*.ps1   text eol=crlf
+*.cmd   text eol=crlf
+*.bat   text eol=crlf
+
+# Archivos que siempre son LF
+*.sh    text eol=lf
+
+# Binarios: nunca normalizar
+*.docx  binary
+*.xlsx  binary
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.zip   binary
+*.pfx   binary

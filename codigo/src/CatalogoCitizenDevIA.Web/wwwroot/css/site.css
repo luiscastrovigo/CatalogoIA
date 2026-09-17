@@ -1,0 +1,234 @@
+/* Catálogo de Citizen Development & IA — Yanbal
+   Tokens de identidad visual aprobada (ver 04-identidad-visual.md):
+   ink #171512, naranja de marca #B5541F, dorado #B8912B / #D9A73B,
+   tipografía Geist / Geist Mono, sombras suaves inspiradas en Fluent 2. */
+
+:root {
+  --ink: #171512;
+  --ink-soft: #55504a;
+  --paper: #FBF7F2;
+  --paper-raised: #FFFFFF;
+  --border: #E7DFD5;
+  --orange: #B5541F;
+  --orange-dark: #8f4118;
+  --gold: #B8912B;
+  --gold-light: #D9A73B;
+  --nivel1: #3E7B4F;
+  --nivel1-bg: #E7F2EA;
+  --nivel2: #A9740F;
+  --nivel2-bg: #FBEFD8;
+  --nivel3: #B23A2E;
+  --nivel3-bg: #FBE7E4;
+  --shadow-1: 0 1px 2px rgba(23,21,18,0.06), 0 1px 1px rgba(23,21,18,0.04);
+  --shadow-2: 0 4px 12px rgba(23,21,18,0.08), 0 2px 4px rgba(23,21,18,0.06);
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+code, .font-mono {
+  font-family: "Geist Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+/* Punto 8 de retroalimentacion de usuarios (2026-09): los navegadores aplican
+   una tipografia propia a los controles de formulario por defecto, distinta
+   a la del body — hay que forzarla explicitamente a heredar. */
+input, select, textarea, button {
+  font-family: inherit;
+}
+
+a { color: var(--orange-dark); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.app-shell { display: flex; min-height: 100vh; }
+
+.app-sidebar {
+  width: 248px;
+  flex-shrink: 0;
+  background: var(--paper-raised);
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 20px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-logo .mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-1);
+}
+
+.app-logo .mark svg { width: 18px; height: 18px; }
+
+.app-logo .title { font-weight: 600; font-size: 14px; line-height: 1.2; }
+.app-logo .subtitle { font-size: 11.5px; color: var(--ink-soft); }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.nav-link:hover { background: var(--paper); text-decoration: none; }
+.nav-link.active { background: var(--nivel3-bg); color: var(--orange-dark); }
+.nav-section-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-soft);
+  padding: 14px 10px 4px;
+}
+
+.app-main { flex: 1; min-width: 0; }
+
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--paper-raised);
+}
+
+.app-content { padding: 28px; max-width: 1280px; }
+
+.card-surface {
+  background: var(--paper-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+}
+
+.avatar-initials {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold-light); color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tag-nivel-1 { background: var(--nivel1-bg); color: var(--nivel1); }
+.tag-nivel-2 { background: var(--nivel2-bg); color: var(--nivel2); }
+.tag-nivel-3 { background: var(--nivel3-bg); color: var(--nivel3); }
+.tag-neutral { background: var(--paper); color: var(--ink-soft); border: 1px solid var(--border); }
+.tag-gold { background: #FBF1DA; color: var(--gold); }
+/* Estado "Reclasificado" (04-identidad-visual.md: violeta #6B5B95) */
+.tag-reclasificado { background: #EFEAF7; color: #6B5B95; }
+
+.btn-brand {
+  background: var(--orange);
+  border: 1px solid var(--orange-dark);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.btn-brand:hover { background: var(--orange-dark); color: #fff; }
+
+.btn-outline-brand {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.btn-outline-brand:hover { background: var(--paper); }
+
+.kpi-card { padding: 18px; }
+.kpi-value { font-size: 28px; font-weight: 700; line-height: 1; }
+.kpi-label { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+/* Cards del Dashboard ejecutivo enlazadas al listado correspondiente
+   (retroalimentacion de usuarios, 2026-09-08). */
+a.kpi-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+a.kpi-card-link:hover {
+  border-color: var(--orange);
+  box-shadow: var(--shadow-2);
+  text-decoration: none;
+  color: inherit;
+}
+a.kpi-card-link:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.bar-row .label { width: 190px; font-size: 12.5px; color: var(--ink-soft); flex-shrink: 0; }
+.bar-track { flex: 1; background: var(--paper); border-radius: 6px; height: 10px; overflow: hidden; border: 1px solid var(--border); }
+.bar-fill { height: 100%; background: var(--gold-light); }
+.bar-row .count { width: 34px; text-align: right; font-size: 12.5px; font-weight: 600; }
+
+table.table-clean { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.table-clean th {
+  text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--ink-soft); border-bottom: 1px solid var(--border); padding: 8px 10px;
+}
+table.table-clean td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+table.table-clean td.font-mono { font-size: 11.5px; white-space: nowrap; }
+table.table-clean tr:hover td { background: rgba(181,84,31,0.03); }
+
+.form-label { font-size: 13px; font-weight: 600; margin-bottom: 4px; display: block; }
+.form-hint { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
+
+.risk-live-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--paper);
+  font-weight: 600;
+}
+
+.login-shell {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #FBF7F2 0%, #F4ECE0 100%);
+}
+.login-card { width: 380px; padding: 32px; }

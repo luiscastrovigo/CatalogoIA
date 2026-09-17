@@ -1,0 +1,101 @@
+@{
+    var esAdmin = User.Identity?.IsAuthenticated == true && User.GetEsAdministrador();
+    var esAprobador = User.Identity?.IsAuthenticated == true && User.GetEsAprobador();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — Catálogo Citizen Development IA</title>
+    <!-- Icono de pestana con el logo de Yanbal (2026-09-07). Se declara explicito en vez de
+         depender de la convencion implicita "/favicon.ico" del navegador porque la App se
+         despliega bajo un subdirectorio (/CatalogoIA/, ver 10-guia-despliegue-perms220.md
+         seccion 2) -- esa convencion pide "/favicon.ico" en la raiz del DOMINIO, que nunca
+         resuelve a este sitio. El "~/" lo resuelve el TagHelper de ASP.NET Core con el
+         PathBase real de la app (funcione bajo subcarpeta o como sitio independiente). -->
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon-180.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="app-shell">
+        <aside class="app-sidebar">
+            <div class="app-logo">
+                <span class="mark">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round"/>
+                        <path d="M12 12L21 7" stroke="#FFFFFF" stroke-width="1.6"/>
+                        <path d="M12 12V22" stroke="#FFFFFF" stroke-width="1.6"/>
+                        <path d="M12 12L3 7" stroke="#FFFFFF" stroke-width="1.6"/>
+                    </svg>
+                </span>
+                <div>
+                    <div class="title">Catálogo IA</div>
+                    <div class="subtitle">Citizen Development · Yanbal</div>
+                </div>
+            </div>
+
+            <a class="nav-link @(currentController == "Solucion" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Solucion" asp-action="Index">Catálogo</a>
+            <a class="nav-link @(currentController == "Solucion" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")" asp-controller="Solucion" asp-action="Create">Registrar solución</a>
+
+            @if (esAdmin || esAprobador)
+            {
+                <div class="nav-section-label">Administración</div>
+                <a class="nav-link @(currentController == "Revision" ? "active" : "")" asp-controller="Revision" asp-action="Index">Revisión y aprobación</a>
+                @if (esAdmin)
+                {
+                    <a class="nav-link @(currentController == "Plataforma" ? "active" : "")" asp-controller="Plataforma" asp-action="Index">Plataformas</a>
+                    <a class="nav-link @(currentController == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index">Dashboard ejecutivo</a>
+                    <a class="nav-link @(currentController == "Usuario" ? "active" : "")" asp-controller="Usuario" asp-action="Index">Gestión de Usuarios</a>
+                }
+            }
+        </aside>
+
+        <div class="app-main">
+            <header class="app-topbar">
+                <div style="font-weight:600;">@ViewData["Title"]</div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <span class="tag @(esAdmin || esAprobador ? "tag-gold" : "tag-neutral")">
+                        @(esAdmin && esAprobador ? "Administrador · Aprobador" : esAdmin ? "Administrador" : esAprobador ? "Aprobador" : "Usuario registrante")
+                    </span>
+                    <div class="avatar-initials">@(string.Concat((User.GetNombre() ?? "?").Split(' ').Take(2).Select(p => p.Length > 0 ? p[0] : ' ')).ToUpper())</div>
+                    <span style="font-size:13px;">@User.GetNombre()</span>
+                    <form asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut" method="post" style="margin:0;">
+                        <button type="submit" class="btn-outline-brand" style="padding:6px 12px;">Salir</button>
+                    </form>
+                </div>
+            </header>
+            <main class="app-content">
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="card-surface" style="padding:12px 16px;margin-bottom:16px;border-color:var(--nivel1);background:var(--nivel1-bg);color:var(--nivel1);">@TempData["Mensaje"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="card-surface" style="padding:12px 16px;margin-bottom:16px;border-color:var(--nivel3);background:var(--nivel3-bg);color:var(--nivel3);">@TempData["Error"]</div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+else
+{
+    @RenderBody()
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

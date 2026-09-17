@@ -1,0 +1,65 @@
+@model IReadOnlyList<Plataforma>
+@{ ViewData["Title"] = "Administración de plataformas"; }
+<div style="display:flex;justify-content:space-between;align-items:center;">
+    <div>
+        <h1 style="font-size:20px;margin-bottom:0;">Administración de plataformas</h1>
+        <p class="form-hint">Maestro editable de plataformas de IA aprobadas. Puede arrancar vacío y completarse conforme se necesite (05-documento-cero-prerequisitos.md, sección 4).</p>
+    </div>
+    <a asp-action="Create" class="btn-brand">+ Nueva plataforma</a>
+</div>
+
+<div class="card-surface" style="overflow-x:auto;margin-top:14px;">
+    <table class="table-clean">
+        <thead><tr><th>Nombre</th><th>Categoría</th><th>Estado</th><th>Activa</th><th></th><th></th></tr></thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:24px;">Sin plataformas registradas todavía.</td></tr>
+            }
+            @{ var plataformasConSoluciones = (HashSet<int>)ViewBag.PlataformasConSoluciones; }
+            @foreach (var p in Model)
+            {
+                var enUso = plataformasConSoluciones.Contains(p.PlataformaId);
+                <tr>
+                    <td>@p.Nombre</td>
+                    <td>@p.Categoria</td>
+                    <td><span class="tag @(p.Estado == Plataforma.EstadoAprobada ? "tag-nivel-1" : p.Estado == Plataforma.EstadoDescontinuada ? "tag-nivel-3" : "tag-nivel-2")">@p.Estado</span></td>
+                    <td>@(p.Activo ? "Sí" : "No")</td>
+                    <td>
+                        <form method="post" asp-action="CambiarEstado" style="display:flex;gap:6px;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@p.PlataformaId" />
+                            <select name="estado" style="padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;" class="js-auto-submit">
+                                @foreach (var e in Plataforma.EstadosValidos)
+                                {
+                                    <option value="@e" selected="@(p.Estado == e)">@e</option>
+                                }
+                            </select>
+                        </form>
+                    </td>
+                    <td style="white-space:nowrap;">
+                        <div style="display:flex;gap:10px;align-items:center;">
+                            <a asp-action="Editar" asp-route-id="@p.PlataformaId">Editar</a>
+                            @if (enUso)
+                            {
+                                <span class="form-hint" title="No se puede eliminar: ya tiene soluciones registradas en el catálogo con esta plataforma.">Eliminar</span>
+                            }
+                            else
+                            {
+                                <form method="post" asp-action="Eliminar" asp-route-id="@p.PlataformaId" class="js-confirmar-eliminar"
+                                      data-mensaje="@($"¿Eliminar la plataforma {p.Nombre}? Esta acción no se puede deshacer.")" style="margin:0;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" style="background:none;border:none;padding:0;color:var(--nivel3);cursor:pointer;font-size:inherit;text-decoration:underline;">Eliminar</button>
+                                </form>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script src="~/js/catalogo-ui.js" asp-append-version="true"></script>
+}

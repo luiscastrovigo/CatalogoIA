@@ -1,0 +1,74 @@
+@model DashboardViewModel
+@using Microsoft.AspNetCore.Html
+@{
+    ViewData["Title"] = "Dashboard ejecutivo";
+
+    IHtmlContent Barras(Dictionary<string, int> datos)
+    {
+        var max = datos.Values.DefaultIfEmpty(0).Max();
+        var sb = new System.Text.StringBuilder();
+        foreach (var kv in datos.OrderByDescending(k => k.Value))
+        {
+            var pct = max == 0 ? 0 : (int)Math.Round(100.0 * kv.Value / max);
+            sb.Append($"<div class='bar-row'><div class='label'>{System.Net.WebUtility.HtmlEncode(kv.Key)}</div><div class='bar-track'><div class='bar-fill' style='width:{pct}%'></div></div><div class='count'>{kv.Value}</div></div>");
+        }
+        if (datos.Count == 0) sb.Append("<div class='form-hint'>Sin datos todavía.</div>");
+        return new HtmlString(sb.ToString());
+    }
+}
+<h1 style="font-size:20px;">Dashboard ejecutivo</h1>
+<p class="form-hint">Equivalente en vivo a la hoja "Resumen" del Excel, más cruces adicionales (01-diccionario-datos-excel.md).</p>
+
+<!--
+    Retroalimentacion de usuarios, 2026-09-08: cada card del resumen ejecutivo
+    enlaza al listado que le corresponde en vez de ser solo texto estatico.
+    "Pendientes de revision inicial" va al modulo Revision y aprobacion (el
+    flujo de trabajo real); las otras tres van al Catalogo con el mismo
+    filtro que usa el conteo del card, para que el numero que se ve aqui
+    coincida exactamente con lo que aparece al hacer clic.
+-->
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px 0;">
+    <a asp-controller="Solucion" asp-action="Index" class="card-surface kpi-card kpi-card-link" title="Ver el catálogo completo">
+        <div class="kpi-value">@Model.TotalSoluciones</div>
+        <div class="kpi-label">Soluciones registradas</div>
+    </a>
+    <a asp-controller="Solucion" asp-action="Index" asp-route-NivelRiesgo="Nivel 3" class="card-surface kpi-card kpi-card-link" title="Ver catálogo filtrado por Nivel 3">
+        <div class="kpi-value" style="color:var(--nivel3);">@Model.PorNivelRiesgo.GetValueOrDefault("Nivel 3", 0)</div>
+        <div class="kpi-label">Nivel 3 (riesgo alto)</div>
+    </a>
+    <a asp-controller="Revision" asp-action="Index" class="card-surface kpi-card kpi-card-link" title="Ir a Revisión y aprobación">
+        <div class="kpi-value">@Model.PorEstado.GetValueOrDefault("Registrado", 0)</div>
+        <div class="kpi-label">Pendientes de revisión inicial</div>
+    </a>
+    <a asp-controller="Solucion" asp-action="Index" asp-route-Proximas30Dias="true" class="card-surface kpi-card kpi-card-link" title="Ver catálogo filtrado por próxima revisión">
+        <div class="kpi-value">@Model.ProximasARevision30Dias</div>
+        <div class="kpi-label">Próximas a revisión (30 días)</div>
+    </a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por nivel de riesgo</div>
+        @Barras(Model.PorNivelRiesgo)
+    </div>
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por estado</div>
+        @Barras(Model.PorEstado)
+    </div>
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por país</div>
+        @Barras(Model.PorPais)
+    </div>
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por área</div>
+        @Barras(Model.PorArea)
+    </div>
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por tipo de solución</div>
+        @Barras(Model.PorTipo)
+    </div>
+    <div class="card-surface" style="padding:18px;">
+        <div class="form-label">Por plataforma</div>
+        @Barras(Model.PorPlataforma)
+    </div>
+</div>

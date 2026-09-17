@@ -1,0 +1,115 @@
+@model DetalleSolucionViewModel
+@{
+    ViewData["Title"] = $"{Model.Solucion.CodigoSolucion} — {Model.Solucion.Nombre}";
+    string TagNivel(string nivel) => nivel switch { "Nivel 1" => "tag-nivel-1", "Nivel 2" => "tag-nivel-2", "Nivel 3" => "tag-nivel-3", _ => "tag-neutral" };
+}
+<a asp-action="Index" class="form-hint">&larr; Volver al catálogo</a>
+<div style="display:flex;align-items:center;justify-content:space-between;">
+    <h1 style="font-size:20px;">@Model.Solucion.CodigoSolucion — @Model.Solucion.Nombre</h1>
+    @if (Model.PuedeEditar)
+    {
+        <a asp-action="Editar" asp-route-id="@Model.Solucion.SolucionId" class="btn-brand" style="height:fit-content;">Editar</a>
+    }
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;">
+    <div class="card-surface" style="padding:20px;">
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <span class="tag @TagNivel(Model.Solucion.NivelRiesgo)">@Model.Solucion.NivelRiesgo</span>
+            <span class="tag tag-neutral">@Model.Solucion.Estado</span>
+        </div>
+        <p>@Model.Solucion.DescripcionBreve</p>
+        <table class="table-clean">
+            <tr><th>Tipo</th><td>@Model.Solucion.TipoSolucion</td></tr>
+            <tr><th>País / Área</th><td>@Model.Solucion.Pais / @Model.Solucion.Area</td></tr>
+            <tr><th>Plataforma</th><td>@Model.Plataforma.Nombre</td></tr>
+            <tr><th>Dueño (owner)</th><td>@Model.Duenio.NombreCompleto (@Model.Duenio.CorreoCorporativo)</td></tr>
+            <tr><th>Registrado por</th><td>@(Model.Registrador is null ? "—" : $"{Model.Registrador.NombreCompleto} ({Model.Registrador.CorreoCorporativo})")</td></tr>
+            <tr><th>Próxima revisión</th><td>@(Model.Solucion.ProximaRevision?.ToString("yyyy-MM-dd") ?? "N/A (Nivel 3)")</td></tr>
+            <tr><th>Enlace de acceso</th><td>@Model.Solucion.EnlaceAcceso</td></tr>
+        </table>
+
+        <h3 style="font-size:14px;margin-top:24px;">Historial de estado</h3>
+        <table class="table-clean">
+            <thead><tr><th>Fecha</th><th>De</th><th>A</th><th>Usuario</th><th>Comentario</th></tr></thead>
+            <tbody>
+                @foreach (var h in Model.Historial)
+                {
+                    <tr>
+                        <td>@h.FechaCambio.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@(h.EstadoAnterior ?? "—")</td>
+                        <td>@h.EstadoNuevo</td>
+                        <td>@Model.NombreUsuarioPorId.GetValueOrDefault(h.UsuarioId, "—")</td>
+                        <td>@h.Comentario</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        @if (User.GetEsAdministrador() || User.GetEsAprobador())
+        {
+            <div class="card-surface" style="padding:16px;">
+                <div class="form-label">Acción rápida</div>
+                <a asp-controller="Revision" asp-action="Index" class="btn-outline-brand" style="display:block;text-align:center;">Ir a Revisión y aprobación</a>
+            </div>
+        }
+        <div class="card-surface" style="padding:16px;margin-top:14px;">
+            <div class="form-label">Notificaciones enviadas</div>
+            @foreach (var n in Model.Notificaciones)
+            {
+                <div style="font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--border);">
+                    @n.TipoNotificacion — <span class="tag @(n.Estado == "Enviado" ? "tag-nivel-1" : "tag-nivel-3")">@n.Estado</span>
+                    <div class="form-hint">@n.FechaEnvio.ToString("yyyy-MM-dd HH:mm") a @n.CorreoDestino</div>
+                </div>
+            }
+        </div>
+
+        <div class="card-surface" style="padding:16px;margin-top:14px;">
+            <div class="form-label">Adjuntos</div>
+            @if (Model.Adjuntos.Count == 0)
+            {
+                <p class="form-hint" style="margin:6px 0 0;">Sin archivos adjuntos.</p>
+            }
+            @foreach (var a in Model.Adjuntos)
+            {
+                <div style="font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--border);">
+                    <a asp-action="DescargarAdjunto" asp-route-id="@a.AdjuntoId">@a.NombreArchivo</a>
+                    <div class="form-hint">
+                        @a.TipoAdjunto &middot; @a.TamanoLegible &middot;
+                        @Model.NombreUsuarioPorId.GetValueOrDefault(a.SubidoPorId, "—") &middot;
+                        @a.FechaCarga.ToString("yyyy-MM-dd")
+                    </div>
+                    @if (Model.PuedeEditar)
+                    {
+                        <form method="post" asp-action="EliminarAdjunto" asp-route-id="@a.AdjuntoId" class="js-confirmar-eliminar"
+                              data-mensaje="@($"¿Eliminar el adjunto {a.NombreArchivo}? Esta acción no se puede deshacer.")" style="margin:4px 0 0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" style="background:none;border:none;padding:0;color:var(--nivel3);cursor:pointer;font-size:12px;text-decoration:underline;">Eliminar</button>
+                        </form>
+                    }
+                </div>
+            }
+            @if (Model.PuedeEditar && Model.Adjuntos.Count < AdjuntoService.MaximoPorSolucion)
+            {
+                <form method="post" enctype="multipart/form-data" asp-action="SubirAdjunto" asp-route-id="@Model.Solucion.SolucionId" style="margin-top:12px;">
+                    @Html.AntiForgeryToken()
+                    <input type="file" name="archivo" required accept="@AdjuntoService.AceptaHtml" style="width:100%;font-size:12px;" />
+                    <select name="tipoAdjunto" style="width:100%;margin-top:8px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+                        @foreach (var t in Adjunto.TiposValidos)
+                        {
+                            <option value="@t">@t</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn-outline-brand" style="margin-top:8px;width:100%;">Adjuntar archivo</button>
+                </form>
+                <p class="form-hint" style="margin-top:8px;">Máximo @AdjuntoService.TamanoMaximoMb MB. Formatos: @AdjuntoService.ExtensionesPermitidas</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="~/js/catalogo-ui.js" asp-append-version="true"></script>
+}

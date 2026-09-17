@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PLANTILLA. Este archivo SÍ se versiona; el web.config real NO.
+
+  Al publicar, "dotnet publish" regenera web.config y borra el bloque
+  <environmentVariables>. Hay que volver a colocarlo después de cada
+  publicación, o definir las variables a nivel del App Pool en IIS.
+  Procedimiento completo en 10-guia-despliegue-perms220.md, sección 4.
+
+  Reemplazar cada marcador por el valor real SOLO en el servidor.
+  Nunca guardar los valores reales en este repositorio.
+
+  Nota sobre la contraseña de la cadena de conexión: si contiene un
+  punto y coma o una comilla, encerrarla entre comillas simples y
+  duplicar las comillas simples internas. Ver 10-guia-despliegue-perms220.md,
+  sección 4, opción A, causa 3.
+-->
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore processPath="dotnet" arguments=".\CatalogoCitizenDevIA.Web.dll"
+                  stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess">
+        <environmentVariables>
+          <environmentVariable name="ConnectionStrings__Default" value="Server=PERMS02;Database=YanbalCitizenDevIA;User Id=REEMPLAZAR_USUARIO;Password=REEMPLAZAR_PASSWORD;TrustServerCertificate=True;" />
+          <environmentVariable name="AzureAd__TenantId" value="REEMPLAZAR_TENANT_ID" />
+          <environmentVariable name="AzureAd__ClientId" value="REEMPLAZAR_CLIENT_ID" />
+          <environmentVariable name="AzureAd__ClientSecret" value="REEMPLAZAR_CLIENT_SECRET" />
+          <environmentVariable name="Notificaciones__RemitenteCorreo" value="no-reply-catalogoia@yanbal.com" />
+          <environmentVariable name="DataProtection__KeysPath" value="C:\inetpub\keys\CatalogoIA" />
+          <environmentVariable name="ForwardedHeaders__KnownProxies" value="REEMPLAZAR_IP_DEL_REVERSE_PROXY" />
+        </environmentVariables>
+      </aspNetCore>
+    </system.webServer>
+  </location>
+</configuration>

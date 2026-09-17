@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    Paquetes NuGet de esta version (integracion contra PERMS02 / Entra ID / Graph).
+
+    Auditoria de seguridad 2026-09-10, hallazgo H-09: estas referencias usaban rangos
+    flotantes ("8.0.*", "5.*", "3.*", "1.*"). Un rango flotante permite que cualquier
+    "dotnet restore" futuro traiga, sin que nadie lo revise, una version distinta a la
+    probada — un cambio de comportamiento, un defecto, o en el peor caso un paquete
+    comprometido en la cadena de suministro. Ahora estan fijadas a las versiones
+    EXACTAS que el restore real ya habia resuelto en la maquina de compilacion, por lo
+    que el binario resultante es el mismo que se venia produciendo.
+
+    Para actualizar a proposito: cambiar el numero aqui, restaurar, compilar y probar.
+    Para revisar vulnerabilidades conocidas de estas versiones, correr "dotnet list package"
+    con las opciones "vulnerable" e "include-transitive". El comando exacto esta en
+    11-auditoria-seguridad.md: no se escribe aqui porque XML no admite dos guiones
+    seguidos dentro de un comentario.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.30" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.30">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.15.1" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.15.1" />
+    <PackageReference Include="Microsoft.Graph" Version="5.105.0" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+  </ItemGroup>
+
+</Project>

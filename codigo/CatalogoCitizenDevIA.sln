@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C460D532-0ED0-4518-B972-6958F3824EC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogoCitizenDevIA.Web", "src\CatalogoCitizenDevIA.Web\CatalogoCitizenDevIA.Web.csproj", "{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogoCitizenDevIA.Tests", "src\CatalogoCitizenDevIA.Tests\CatalogoCitizenDevIA.Tests.csproj", "{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4A9CD08E-E983-4247-B8E7-35BCD5A3DC00} = {C460D532-0ED0-4518-B972-6958F3824EC2}
+		{020C4B77-A6C4-45C9-BF17-BAAC8BE267D1} = {C460D532-0ED0-4518-B972-6958F3824EC2}
+	EndGlobalSection
+EndGlobal

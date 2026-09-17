@@ -1,0 +1,109 @@
+# =========================================================
+#  Catálogo de Soluciones Citizen Development (CatalogoIA)
+#  .gitignore
+#
+#  REGLA DE ORO: en este repositorio NUNCA entra un secreto.
+#  TenantId, ClientId, ClientSecret, la cadena de conexión a
+#  PERMS02 y el buzón remitente viven SOLO en variables de
+#  entorno del App Pool de IIS (ver 10-guia-despliegue-perms220.md).
+# =========================================================
+
+# ---------------------------------------------------------
+# 1. SECRETOS  — lo más importante de este archivo
+# ---------------------------------------------------------
+# web.config lleva el bloque <environmentVariables> con la
+# contraseña de SQL Server y el ClientSecret de Entra ID.
+# Se ignora en CUALQUIER carpeta del repositorio.
+web.config
+**/web.config
+
+# ...pero sí se versiona la plantilla sin valores reales:
+!codigo/web.config.ejemplo
+!**/web.config.ejemplo
+
+# Configuración local / de producción con posibles secretos
+appsettings.Production.json
+appsettings.*.Local.json
+appsettings.Local.json
+secrets.json
+*.pubxml
+*.pubxml.user
+PublishProfiles/
+*.publishsettings
+
+# Certificados y llaves
+*.pfx
+*.p12
+*.key
+*.pem
+*.snk
+
+# Llaves de Data Protection (si el folder queda dentro del repo)
+keys/
+DataProtection-Keys/
+
+# ---------------------------------------------------------
+# 2. Salida de compilación y publicación
+# ---------------------------------------------------------
+bin/
+obj/
+**/bin/
+**/obj/
+publish/
+**/publish/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ll]og/
+[Ll]ogs/
+*.log
+
+# ---------------------------------------------------------
+# 3. Visual Studio / Rider / VS Code
+# ---------------------------------------------------------
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# ---------------------------------------------------------
+# 4. Paquetes y artefactos pesados
+# ---------------------------------------------------------
+packages/
+*.nupkg
+*.zip
+*.7z
+*.rar
+NuGet.Config.disabled-sandbox
+
+# ---------------------------------------------------------
+# 5. Carpeta de trabajo de salidas (no es código fuente)
+# ---------------------------------------------------------
+# Contiene informes generados y copias comprimidas del código.
+# Si algún informe debe quedar versionado, muévelo a docs/informes/
+# y ese archivo sí entrará al repositorio.
+Claude outputs/
+
+# ---------------------------------------------------------
+# 6. Ruido de Windows / OneDrive / Office
+# ---------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+# archivos temporales de Office (~$documento.docx)
+~$*
+
+# ---------------------------------------------------------
+# 7. Python (herramientas de validación estática)
+# ---------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/

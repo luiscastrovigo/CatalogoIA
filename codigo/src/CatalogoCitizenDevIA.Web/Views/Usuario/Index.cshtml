@@ -1,0 +1,60 @@
+@model IReadOnlyList<Usuario>
+@{ ViewData["Title"] = "Gestión de Usuarios"; }
+<h1 style="font-size:20px;">Gestión de Usuarios</h1>
+<p class="form-hint">Aquí se decide quién administra el catálogo y quién puede aprobar cambios de estado — no depende de grupos de Azure AD (05-documento-cero-prerequisitos.md, sección 3).</p>
+
+<div class="card-surface" style="padding:14px;margin-top:14px;">
+    <strong style="font-size:13px;">Invitar usuario nuevo por correo</strong>
+    <p class="form-hint" style="margin-top:4px;">
+        Úsalo cuando la persona todavía no inició sesión nunca en la App (por eso no aparece abajo).
+        Los roles seleccionados se activan automáticamente la primera vez que esa persona inicia sesión.
+    </p>
+    <form method="post" asp-action="Invitar" style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;align-items:center;">
+        @Html.AntiForgeryToken()
+        <input type="email" name="correoCorporativo" placeholder="nombre.apellido@yanbal.com" required
+               style="flex:1;min-width:220px;padding:7px 10px;border:1px solid var(--border,#ddd);border-radius:6px;" />
+        <label style="font-size:13px;display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" name="comoAdministrador" value="true" /> Administrador
+        </label>
+        <label style="font-size:13px;display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" name="comoAprobador" value="true" /> Aprobador
+        </label>
+        <button type="submit" class="btn-outline-brand" style="padding:7px 14px;font-size:13px;">Invitar</button>
+    </form>
+</div>
+
+<div class="card-surface" style="overflow-x:auto;margin-top:14px;">
+    <table class="table-clean">
+        <thead><tr><th>Usuario</th><th>Correo</th><th>Roles</th><th>Último acceso</th><th></th></tr></thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.NombreCompleto</td>
+                    <td>@u.CorreoCorporativo</td>
+                    <td>
+                        <span class="tag @(u.EsAdministrador ? "tag-gold" : "tag-neutral")">@(u.EsAdministrador ? "Administrador" : "—")</span>
+                        <span class="tag @(u.EsAprobador ? "tag-gold" : "tag-neutral")">@(u.EsAprobador ? "Aprobador" : "—")</span>
+                    </td>
+                    <td>@(u.FechaUltimoAcceso?.ToString("yyyy-MM-dd HH:mm") ?? "Pendiente de primer ingreso")</td>
+                    <td style="display:flex;gap:6px;">
+                        <form method="post" asp-action="ToggleAdmin" style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="usuarioId" value="@u.UsuarioId" />
+                            <button type="submit" class="btn-outline-brand" style="padding:5px 10px;font-size:12px;">
+                                @(u.EsAdministrador ? "Retirar Admin" : "Otorgar Admin")
+                            </button>
+                        </form>
+                        <form method="post" asp-action="ToggleAprobador" style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="usuarioId" value="@u.UsuarioId" />
+                            <button type="submit" class="btn-outline-brand" style="padding:5px 10px;font-size:12px;">
+                                @(u.EsAprobador ? "Retirar Aprobador" : "Otorgar Aprobador")
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

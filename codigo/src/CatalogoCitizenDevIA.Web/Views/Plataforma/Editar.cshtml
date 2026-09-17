@@ -1,0 +1,27 @@
+@model EditarPlataformaInput
+@{ ViewData["Title"] = "Editar plataforma"; }
+<h1 style="font-size:20px;">Editar plataforma</h1>
+<p class="form-hint">Se puede cambiar el nombre y la categoría. Estado y comentario se administran desde el listado o al crear.</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="card-surface" style="padding:10px 14px;margin-bottom:14px;border-color:var(--nivel3);background:var(--nivel3-bg);color:var(--nivel3);font-size:13px;">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors)) { <div>@error.ErrorMessage</div> }
+    </div>
+}
+
+<form method="post" asp-action="Editar" class="card-surface" style="padding:24px;max-width:520px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="PlataformaId" value="@Model.PlataformaId" />
+
+    <label class="form-label">Nombre</label>
+    <input type="text" name="Nombre" value="@Model.Nombre" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;" />
+
+    <label class="form-label">Categoría</label>
+    <input type="text" name="Categoria" value="@Model.Categoria" placeholder="Ej. Transversal, BI, Automatización" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;" />
+
+    <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn-brand">Grabar</button>
+        <a asp-action="Index" class="btn-outline-brand">Cancelar</a>
+    </div>
+</form>

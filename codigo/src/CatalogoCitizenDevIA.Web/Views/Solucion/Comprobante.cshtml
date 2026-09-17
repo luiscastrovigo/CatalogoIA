@@ -1,0 +1,43 @@
+@model DetalleSolucionViewModel
+@{
+    ViewData["Title"] = "Comprobante de registro";
+    string TagNivel(string nivel) => nivel switch { "Nivel 1" => "tag-nivel-1", "Nivel 2" => "tag-nivel-2", "Nivel 3" => "tag-nivel-3", _ => "tag-neutral" };
+    var notificacion = Model.Notificaciones.LastOrDefault();
+}
+<div class="card-surface" style="padding:32px;max-width:640px;">
+    <div class="tag tag-nivel-1" style="margin-bottom:16px;">✓ Registro completado</div>
+    <h1 style="font-size:22px;margin:0 0 4px;">@Model.Solucion.CodigoSolucion</h1>
+    <p style="color:var(--ink-soft);margin-top:0;">@Model.Solucion.Nombre</p>
+
+    <div style="display:flex;gap:8px;margin:16px 0;">
+        <span class="tag @TagNivel(Model.Solucion.NivelRiesgo)">@Model.Solucion.NivelRiesgo</span>
+        <span class="tag tag-neutral">@Model.Solucion.Estado</span>
+    </div>
+
+    <table class="table-clean">
+        <tr><th>Plataforma</th><td>@Model.Plataforma.Nombre</td></tr>
+        <tr><th>Próxima revisión</th><td>@(Model.Solucion.ProximaRevision?.ToString("yyyy-MM-dd") ?? "N/A (Nivel 3)")</td></tr>
+        <tr><th>Dueño (owner)</th><td>@Model.Duenio.NombreCompleto</td></tr>
+        <tr><th>Registrado por</th><td>@(Model.Registrador?.NombreCompleto ?? "—")</td></tr>
+        <tr><th>Fecha de registro</th><td>@Model.Solucion.FechaRegistro.ToString("yyyy-MM-dd HH:mm") UTC</td></tr>
+    </table>
+
+    @if (notificacion is not null)
+    {
+        <div class="card-surface" style="padding:14px;margin-top:18px;background:var(--paper);">
+            @if (notificacion.Estado == "Enviado")
+            {
+                <div style="color:var(--nivel1);font-weight:600;">✓ Se envió una constancia de este registro a @notificacion.CorreoDestino</div>
+            }
+            else
+            {
+                <div style="color:var(--nivel3);font-weight:600;">⚠ No se pudo enviar la constancia por correo (@notificacion.MensajeError). El registro sí quedó guardado.</div>
+            }
+        </div>
+    }
+
+    <div style="margin-top:24px;display:flex;gap:10px;">
+        <a asp-action="Details" asp-route-id="@Model.Solucion.SolucionId" class="btn-brand">Ver detalle completo</a>
+        <a asp-action="Index" class="btn-outline-brand">Volver al catálogo</a>
+    </div>
+</div>

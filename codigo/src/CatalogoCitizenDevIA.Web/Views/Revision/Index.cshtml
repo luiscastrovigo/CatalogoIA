@@ -1,0 +1,40 @@
+@model IReadOnlyList<Solucion>
+@{
+    ViewData["Title"] = "Revisión y aprobación";
+    string TagNivel(string nivel) => nivel switch { "Nivel 1" => "tag-nivel-1", "Nivel 2" => "tag-nivel-2", "Nivel 3" => "tag-nivel-3", _ => "tag-neutral" };
+}
+<h1 style="font-size:20px;">Revisión y aprobación</h1>
+<p class="form-hint">Soluciones en estado "Registrado" o "En revisión", ordenadas por fecha de registro.</p>
+
+<div style="display:flex;flex-direction:column;gap:12px;margin-top:14px;">
+    @if (Model.Count == 0)
+    {
+        <div class="card-surface" style="padding:24px;text-align:center;color:var(--ink-soft);">No hay soluciones pendientes de revisión.</div>
+    }
+    @foreach (var s in Model)
+    {
+        <div class="card-surface" style="padding:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:start;">
+                <div>
+                    <div style="font-weight:600;">@s.CodigoSolucion — @s.Nombre</div>
+                    <div class="form-hint">@s.Pais / @s.Area · @s.TipoSolucion</div>
+                </div>
+                <span class="tag @TagNivel(s.NivelRiesgo)">@s.NivelRiesgo</span>
+            </div>
+
+            <form method="post" asp-action="CambiarEstado" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="solucionId" value="@s.SolucionId" />
+                <select name="nuevoEstado" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;">
+                    @foreach (var e in Solucion.EstadosValidos) { <option value="@e">@e</option> }
+                </select>
+                <select name="revisadoPor" style="padding:7px 10px;border:1px solid var(--border);border-radius:8px;">
+                    @foreach (var r in Solucion.RevisadoPorValidos.Where(r => r != "N/A - autoregistro")) { <option value="@r">@r</option> }
+                </select>
+                <input type="text" name="comentario" placeholder="Comentario (obligatorio para el historial)" style="flex:1;min-width:200px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;" />
+                <button type="submit" class="btn-brand">Aplicar</button>
+                <a asp-controller="Solucion" asp-action="Details" asp-route-id="@s.SolucionId" class="btn-outline-brand">Ver detalle</a>
+            </form>
+        </div>
+    }
+</div>

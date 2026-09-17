@@ -1,0 +1,191 @@
+@model RegistroSolucionInput
+@{
+    ViewData["Title"] = "Registrar solución";
+    var plataformas = ViewBag.Plataformas as IReadOnlyList<Plataforma> ?? new List<Plataforma>();
+}
+<h1 style="font-size:20px;margin-top:0;">Registrar solución</h1>
+<p class="form-hint">El nivel de riesgo se calcula solo — igual que en el Excel original, nunca lo editas a mano (ver <code>08-reglas-negocio-calculo-riesgo.md</code>).</p>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="card-surface" style="padding:10px 14px;margin-bottom:14px;border-color:var(--nivel3);background:var(--nivel3-bg);color:var(--nivel3);font-size:13px;">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+@if (ViewBag.UltimoSolucionId != null)
+{
+    <p style="margin:-8px 0 14px;font-size:13px;">
+        <a asp-action="Comprobante" asp-route-id="@ViewBag.UltimoSolucionId">Ver comprobante del registro anterior →</a>
+    </p>
+}
+
+<form method="post" enctype="multipart/form-data" asp-action="Create" id="form-registro" data-url-calcular="@Url.Action("CalcularRiesgo", "Solucion")" class="card-surface" style="padding:24px;max-width:760px;">
+    @Html.AntiForgeryToken()
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+            <label class="form-label">Nombre de la solución</label>
+            <input type="text" name="Nombre" value="@Model.Nombre" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+        </div>
+        <div>
+            <label class="form-label">Tipo de solución</label>
+            <select name="TipoSolucion" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;">
+                @foreach (var t in Solucion.TiposValidos)
+                {
+                    <option value="@t" selected="@(Model.TipoSolucion == t)">@t</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div style="margin-top:14px;">
+        <label class="form-label">Descripción breve</label>
+        <textarea name="DescripcionBreve" rows="2" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;">@Model.DescripcionBreve</textarea>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:14px;">
+        <div>
+            <label class="form-label">País</label>
+            <input type="text" name="Pais" value="@Model.Pais" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+        </div>
+        <div>
+            <label class="form-label">Área</label>
+            <input type="text" name="Area" value="@Model.Area" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+        </div>
+        <div>
+            <label class="form-label">Plataforma</label>
+            <select name="PlataformaId" id="PlataformaId" required style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;">
+                <option value="">— Seleccionar —</option>
+                @foreach (var p in plataformas)
+                {
+                    <option value="@p.PlataformaId">@p.Nombre</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @if (User.GetEsAdministrador())
+    {
+        var usuariosConocidos = ViewBag.Usuarios as IReadOnlyList<Usuario> ?? new List<Usuario>();
+        <h3 style="font-size:14px;margin:22px 0 8px;">Dueño (owner) del registro</h3>
+        <div class="card-surface" style="padding:16px;background:var(--paper);">
+            <p class="form-hint" style="margin:0 0 12px;">
+                Como Administrador puede asignar el registro a otra persona. Si la persona todavía no
+                ha ingresado nunca a la App, su usuario se crea automáticamente y sin ningún rol, y su
+                nombre se corrige solo la primera vez que inicie sesión.
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div>
+                    <label class="form-label">Correo corporativo del dueño</label>
+                    <input type="email" name="DuenioCorreo" value="@Model.DuenioCorreo" list="usuarios-conocidos"
+                           placeholder="nombre.apellido@@yanbal.com"
+                           style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+                    <datalist id="usuarios-conocidos">
+                        @foreach (var u in usuariosConocidos)
+                        {
+                            <option value="@u.CorreoCorporativo">@u.NombreCompleto</option>
+                        }
+                    </datalist>
+                </div>
+                <div>
+                    <label class="form-label">Nombre del dueño</label>
+                    <input type="text" name="DuenioNombre" value="@Model.DuenioNombre" placeholder="Opcional"
+                           style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <h3 style="font-size:14px;margin:22px 0 8px;">Señales de riesgo (columnas J–O del Excel original)</h3>
+    <div class="card-surface" style="padding:16px;background:var(--paper);">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="riesgo-input" id="EsProcesoCritico" name="EsProcesoCritico" value="true" /> ¿Es parte de un proceso crítico de negocio?</label>
+            <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="riesgo-input" id="RequiereConexionCentral" name="RequiereConexionCentral" value="true" /> ¿Requiere conexión a sistema central / Data Lake?</label>
+            <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="riesgo-input" id="UsaPii" name="UsaPii" value="true" /> ¿Usa datos personales (PII)?</label>
+            <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" class="riesgo-input" id="RequierePublicacionInternet" name="RequierePublicacionInternet" value="true" /> ¿Requiere publicación a Internet?</label>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+            <div>
+                <label class="form-label">Alcance de uso</label>
+                <select class="riesgo-input" id="AlcanceUso" name="AlcanceUso" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;">
+                    @foreach (var a in Solucion.AlcancesValidos)
+                    {
+                        <option value="@a">@a</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="form-label">¿Requiere infraestructura dedicada?</label>
+                <select class="riesgo-input" id="RequiereInfraDedicada" name="RequiereInfraDedicada" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;">
+                    @foreach (var i in Solucion.InfraDedicadaValidos)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-top:16px;">
+            <div class="form-label">Nivel de riesgo (calculado — no editable)</div>
+            <div class="risk-live-badge">
+                <span id="badge-nivel" class="tag tag-neutral">Calculando…</span>
+                <span style="color:var(--ink-soft);font-size:12.5px;">Próxima revisión: <span id="badge-revision">—</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px;">
+        <div>
+            <label class="form-label">Enlace de acceso</label>
+            <input type="text" name="EnlaceAcceso" placeholder="https://…" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;" />
+        </div>
+        <div>
+            <label class="form-label">Nivel de madurez</label>
+            <select name="NivelMadurez" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;">
+                <option value="">—</option>
+                @foreach (var m in Solucion.MadurezValidos)
+                {
+                    <option value="@m">@m</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <h3 style="font-size:14px;margin:22px 0 8px;">Documento adjunto (opcional)</h3>
+    <div class="card-surface" style="padding:16px;background:var(--paper);">
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:12px;">
+            <div>
+                <label class="form-label">Archivo</label>
+                <input type="file" name="archivo" accept="@AdjuntoService.AceptaHtml" style="width:100%;padding:8px 0;" />
+            </div>
+            <div>
+                <label class="form-label">Tipo de adjunto</label>
+                <select name="tipoAdjunto" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;">
+                    @foreach (var t in Adjunto.TiposValidos)
+                    {
+                        <option value="@t">@t</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <p class="form-hint" style="margin:10px 0 0;">
+            Acta del comité, captura de pantalla o cualquier documento de soporte.
+            Máximo @AdjuntoService.TamanoMaximoMb MB. Formatos aceptados: @AdjuntoService.ExtensionesPermitidas.
+            Tras registrar puede agregar hasta @AdjuntoService.MaximoPorSolucion archivos desde "Ver detalle".
+        </p>
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px;align-items:center;">
+        <button type="submit" id="btn-registrar" class="btn-brand">Registrar solución</button>
+        <span id="msg-procesando" class="form-hint" style="display:none;">Procesando… Espere un momento.</span>
+        <a asp-action="Index" class="btn-outline-brand">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+<script src="~/js/riesgo-live.js" asp-append-version="true"></script>
+}
